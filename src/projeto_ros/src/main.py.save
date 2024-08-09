@@ -5,6 +5,7 @@ from math import pi
 from sensor_msgs.msg import LaserScan
 from nav_msgs.msg import Odometry
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
+from geometry_msgs.msg import Twist
 
 class myRobot():
 
@@ -14,8 +15,11 @@ class myRobot():
 		rospy.Subscriber('/scan_raw', LaserScan, self.callback_laser)
 		self.distances = [0]*3
 		# Subscriber Odometria
-		rospy.Subscriber('/mobile_base_controller/cmd_de', Odometry, self.callback_odometria, queue_size = 1)
-		# Client Service camera
+		rospy.Subscriber('/mobile_base_controller/odom', Odometry, self.callback_odometria, queue_size = 1)
+		self.cmd_pub = rospy.Publisher('mobile_base_controller/cmd_vel', Twist, queue_size = 1)
+		self.linear_speed = 1
+		self.angular_speed  = 0.0
+	        # Client Service camera
 		# Publisher base
 		# Publisher cabeca
 
@@ -24,7 +28,7 @@ class myRobot():
 		# Armazenar os dados de odometria
 		qtn = msg.pose.pose.orientation
 		qtn_list = [qtn.x, qtn.y, qtn.z, qtn.w]
-		(roll, pitch, yaw) = euler_from_quaternion (qtn_list)
+		roll, pitch, yaw = euler_from_quaternion (qtn_list)
 		print(roll, pitch, yaw)
 
 	def callback_laser(self, msg):
@@ -44,29 +48,42 @@ class myRobot():
 			i+=1
 		print(f'Distances at -90, 0, 90 degrees: {self.distances}')
 
-	def moveStaright(self):
+	def moveStraight(self):
 		print('move straight')
+		move_cmd = Twist()
+		move_cmd.linear.x = self.linear_speed
+		self.cmd_pub.publish(move_cmd)
+		
 		# error = ...
 		# while(abs(error) < value):
 
 	def turn(self, sens):
 		print('turn')
+		#move_cmd = Twist()
 		# error = ...
 		# while(abs(error) < value):
 
 	def decision(self):
 		print('decision')
-        #
+		while self.distances[1] > 0.4:	
+			tiago.moveStraight()
+		 
 
+			
 if __name__ == '__main__':
+	rospy.init_node('TIAgoNODE')	
+	
+	while not rospy.is_shutdown():
+        #rospy.init_node('TIAGoNODE')
+		tiago = myRobot()
+		tiago.decision()
 
-	rospy.init_node('nodeName')
 
-	tiago = myRobot()
+      #  subObj = mySub()
+       # While ROS is running
+    
 
-	state = 0
-
-	rospy.sleep(1)
+	#rospy.sleep(1)
 	# while(...):
 	# if state == 0:
 	       	# decision

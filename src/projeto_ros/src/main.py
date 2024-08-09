@@ -1,7 +1,7 @@
 #! /usr/bin/python3
 
 import rospy
-from math import pi
+from math import pi, inf
 from sensor_msgs.msg import LaserScan
 from nav_msgs.msg import Odometry
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
@@ -17,8 +17,8 @@ class myRobot():
 		# Subscriber Odometria
 		rospy.Subscriber('/mobile_base_controller/odom', Odometry, self.callback_odometria, queue_size = 1)
 		self.cmd_pub = rospy.Publisher('mobile_base_controller/cmd_vel', Twist, queue_size = 1)
-		self.linear_speed = 1
-		self.angular_speed  = 0.0
+		self.linear_speed = 2
+		self.angular_speed  = 0
 	        # Client Service camera
 		# Publisher base
 		# Publisher cabeca
@@ -44,42 +44,46 @@ class myRobot():
 				index = int((angle - angle_min) / angle_increment)
 				self.distances[i] = ranges[index]
 			else:
-				self.distances[i] = float('inf')
+				self.distances[i] = inf
 			i+=1
 		print(f'Distances at -90, 0, 90 degrees: {self.distances}')
 
 	def moveStraight(self):
 		print('move straight')
 		move_cmd = Twist()
-		move_cmd.linear.x = self.linear_speed
+		move_cmd.linear.z = self.linear_speed
 		self.cmd_pub.publish(move_cmd)
 		
 		# error = ...
 		# while(abs(error) < value):
 
-	def turn(self, sens):
+	def turn(self, orientation):
 		print('turn')
+		move_cmd = Twist()
+		move_cmd.angular.z = orientation*pi
+		self.cmd_pub.publish(move_cmd) 
 		#move_cmd = Twist()
 		# error = ...
 		# while(abs(error) < value):
 
 	def decision(self):
 		print('decision')
-		while not rospy.is_shutdown():
-			while self.distances[1] > 0.4:	
-				tiago.moveStraight()
-		 
+		while (self.distances[1] > 1.0):	
+			self.moveStraight()
+		if (self.distances[0]) < (self.distances[2]):
+			self.turn(-1)
+		else:
+			self.turn(1)
 
 			
 if __name__ == '__main__':
 	rospy.init_node('TIAgoNODE')	
-	rate = rospy.Rate(1)
-	
+	rospy.Rate(1)
+	tiago = myRobot()
 	while not rospy.is_shutdown():
         #rospy.init_node('TIAGoNODE')
-		tiago = myRobot()
 		tiago.decision()
-
+		
 
       #  subObj = mySub()
        # While ROS is running
