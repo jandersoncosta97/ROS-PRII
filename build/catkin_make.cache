@@ -1,0 +1,2 @@
+
+-DCATKIN_DEVEL_PREFIX=/home/jlc/turma_04/devel -DCMAKE_INSTALL_PREFIX=/home/jlc/turma_04/install -G Unix Makefiles

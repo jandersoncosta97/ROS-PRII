@@ -1,0 +1,83 @@
+#! /usr/bin/python3
+
+import rospy
+from math import pi
+from sensor_msgs.msg import LaserScan
+from nav_msgs.msg import Odometry
+from tf.transformations import euler_from_quaternion, quaternion_from_euler
+
+class myRobot():
+
+	def __init__(self):
+		print('init')
+		# Subscriber Laser
+		rospy.Subscriber('/scan_raw', LaserScan, self.callback_laser)
+		self.distances = [0]*3
+		# Subscriber Odometria
+		rospy.Subscriber('/mobile_base_controller/cmd_de', Odometry, self.callback_odometria, queue_size = 1)
+		# Client Service camera
+		# Publisher base
+		# Publisher cabeca
+
+	def callback_odometria(self, msg):
+		print('callback odometria')
+		# Armazenar os dados de odometria
+		qtn = msg.pose.pose.orientation
+		qtn_list = [qtn.x, qtn.y, qtn.z, qtn.w]
+		(roll, pitch, yaw) = euler_from_quaternion (qtn_list)
+		print(roll, pitch, yaw)
+
+	def callback_laser(self, msg):
+		print('callback laser')
+		ranges = msg.ranges
+		angle_min = msg.angle_min
+		angle_increment = msg.angle_increment
+		i = 0
+		# Calculate indices for -90, 0, and 90 degrees
+		angle_target = [-pi/2, 0, pi/2]
+		for angle in angle_target:
+			if angle >= msg.angle_min and angle <= msg.angle_max:
+				index = int((angle - angle_min) / angle_increment)
+				self.distances[i] = ranges[index]
+			else:
+				self.distances[i] = float('inf')
+			i+=1
+		print(f'Distances at -90, 0, 90 degrees: {self.distances}')
+
+	def moveStaright(self):
+		print('move straight')
+		# error = ...
+		# while(abs(error) < value):
+
+	def turn(self, sens):
+		print('turn')
+		# error = ...
+		# while(abs(error) < value):
+
+	def decision(self):
+		print('decision')
+        #
+
+if __name__ == '__main__':
+
+	rospy.init_node('nodeName')
+
+	tiago = myRobot()
+
+	state = 0
+
+	rospy.sleep(1)
+	# while(...):
+	# if state == 0:
+	       	# decision
+		# compute next state
+	# else if state == 1
+		# image porcessing
+		# compute next state
+	# else if state == 3
+		# move straight
+		# compute next state
+	# else if state == 4
+		# turn
+		# compute next state
+	
