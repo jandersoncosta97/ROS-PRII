@@ -1,0 +1,9 @@
+rocker --home --user --x11 --privileged palroboticssl/tiago_tutorials:noetic --devices /dev/dri/card0
+
+terminator -u
+
+roslaunch tiago_gazebo tiago_gazebo.launch public_sim:=true robot:=titanium world:=maze
+roslaunch tiago_gazebo tiago_gazebo.launch public_sim:=true robot:=titanium world:=mazeTest1
+roslaunch tiago_gazebo tiago_gazebo.launch public_sim:=true robot:=titanium world:=mazeTest2
+
+
