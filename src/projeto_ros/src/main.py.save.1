@@ -43,11 +43,7 @@ class myRobot():
 		qtn_list = [qtn.x, qtn.y, qtn.z, qtn.w]
 		roll, pitch, yaw = euler_from_quaternion (qtn_list)
 		print(roll, pitch, yaw)
-		self.__yaw = yaw
-	
-	@yaw.getter
-	def getYaw(self):
-		return self.__yaw
+		self.yaw = yaw
 
 	def callback_laser(self, msg):
 		print('callback laser')
@@ -85,13 +81,13 @@ class myRobot():
 		# while(abs(error) < value):
 
 	def decision(self):
-		print('decision') 
+		print('decision')
+		yaw = self.yaw+pi/2 
 		uncertainty = pi/20
 		while (self.distances[1] > 1.0):	
 			self.moveStraight()
 		# if (self.distances[0]) < (self.distances[2]):
-		yaw_value = myRobot().getYaw() + pi/2 
-		while yaw_value <= pi/2+uncertainty or yaw_value >= pi/2-uncertainty:
+		while yaw <= yaw+uncertainty or yaw >= yaw-uncertainty:
 			self.turn(-1)
 		# else:
 		#	self.turn(1)
