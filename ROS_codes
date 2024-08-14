@@ -7,4 +7,4 @@ roslaunch tiago_gazebo tiago_gazebo.launch public_sim:=true robot:=titanium worl
 roslaunch tiago_gazebo tiago_gazebo.launch public_sim:=true robot:=titanium world:=mazeTest2
 
 avaliação
-roslaunch tiago_gazebo tiago_gazebo.launch public_sim:=true robot:=titanium world:=prova end effector:=False
+roslaunch tiago_gazebo tiago_gazebo.launch public_sim:=true robot:=titanium world:=prova end_effector:=False
